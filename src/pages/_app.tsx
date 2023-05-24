@@ -19,8 +19,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       domain='auth2.sesamy.dev'
       clientId='VQy2yYCA9rIBJerZrUN0T'
       authorizationParams={{
-        // redirect_uri: window.location.origin,
-        redirect_uri: 'http://localhost:3000',
+        redirectUri:
+          typeof window !== 'undefined' ? window.location.origin : '',
       }}
     >
       <ForceLogin />
