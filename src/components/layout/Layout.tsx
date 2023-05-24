@@ -1,6 +1,23 @@
+import { Box } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 
+import LeftMenu from '@/components/leftMenu/LeftMenu';
+import Navbar from '@/components/navbar/Navbar';
+
 export default function Layout({ children }: { children: React.ReactNode }) {
-  // Put Header or Footer Here
-  return <>{children}</>;
+  const router = useRouter();
+  const { tenantId } = router.query;
+
+  return (
+    <>
+      <Navbar />
+      <Box className='flex'>
+        {tenantId ? <LeftMenu /> : ''}
+        <Box className='w-full p-6' backgroundColor='white' color='black'>
+          {children}
+        </Box>
+      </Box>
+    </>
+  );
 }

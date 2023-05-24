@@ -1,8 +1,12 @@
+import { Auth0Provider } from '@auth0/auth0-react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 
 import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
+
+import ForceLogin from '@/components/auth/Index';
 
 /**
  * !STARTERCONF info
@@ -10,7 +14,21 @@ import '@/styles/colors.css';
  */
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <Auth0Provider
+      domain='auth2.sesamy.dev'
+      clientId='VQy2yYCA9rIBJerZrUN0T'
+      authorizationParams={{
+        // redirect_uri: window.location.origin,
+        redirect_uri: 'http://localhost:3000',
+      }}
+    >
+      <ForceLogin />
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </Auth0Provider>
+  );
 }
 
 export default MyApp;
