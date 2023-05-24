@@ -1,6 +1,6 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { Column, useTable } from 'react-table';
+import { Column, Row, useTable } from 'react-table';
 
 interface TableProps<T extends Record<string, unknown>> {
   columns: Column<T>[];
@@ -16,10 +16,8 @@ function MyTable<T extends Record<string, unknown>>({
   const router = useRouter();
 
   // Handle row click
-  const handleRowClick = (row: T) => {
-    const tmp = row.values as { id: string };
-
-    router.push(`${router.pathname}/${tmp.id}`);
+  const handleRowClick = (row: Row<T>) => {
+    router.push(`${router.pathname}/${row.id}`);
   };
 
   return (
