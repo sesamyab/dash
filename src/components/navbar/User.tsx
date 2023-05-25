@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 
 export default function User() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
@@ -30,9 +30,7 @@ export default function User() {
           <Avatar name={name} src={picture} size='sm' />
         </MenuButton>
         <MenuList>
-          <MenuItem>Profile</MenuItem>
-          <MenuItem>Settings</MenuItem>
-          <MenuItem>Logout</MenuItem>
+          <MenuItem onClick={() => logout()}>Logout</MenuItem>
         </MenuList>
       </Menu>
     </Box>

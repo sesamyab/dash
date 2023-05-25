@@ -17,7 +17,7 @@ function MyTable<T extends Record<string, unknown>>({
 
   // Handle row click
   const handleRowClick = (row: Row<T>) => {
-    router.push(`${router.pathname}/${row.id}`);
+    router.push(`${router.asPath}/${row.values.id}`);
   };
 
   return (

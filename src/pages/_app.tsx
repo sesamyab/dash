@@ -8,6 +8,8 @@ import '@/styles/colors.css';
 
 import ForceLogin from '@/components/auth/Index';
 
+import { trpc } from '../utils/trpc';
+
 /**
  * !STARTERCONF info
  * ? `Layout` component is called in every page using `np` snippets. If you have consistent layout across all page, you can add it here too
@@ -19,7 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       domain='auth2.sesamy.dev'
       clientId='VQy2yYCA9rIBJerZrUN0T'
       authorizationParams={{
-        redirectUri:
+        redirect_uri:
           typeof window !== 'undefined' ? window.location.origin : '',
       }}
     >
@@ -31,4 +33,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default trpc.withTRPC(MyApp);
