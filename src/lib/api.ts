@@ -42,9 +42,14 @@ export async function getUsers(tenantId: string): Promise<User[]> {
 }
 
 export async function getApplications(
-  tenantId: string
+  tenantId: string,
+  token: string
 ): Promise<Application[]> {
-  const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`);
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
 
   return data;

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Application } from '@/lib/api';
+import useAuthToken from '@/hooks/useToken';
 
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
@@ -24,10 +25,12 @@ const COLUMNS = [
 
 export default function Applications() {
   const router = useRouter();
+  const { token } = useAuthToken();
   const { tenantId } = router.query;
 
   const applications = trpc.listApplications.useQuery({
     tenantId: getFirstQueryStringValue(tenantId) || '',
+    token: token || '',
   });
 
   if (!applications.data) {

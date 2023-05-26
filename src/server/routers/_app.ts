@@ -16,9 +16,15 @@ export const appRouter = router({
     .input(
       z.object({
         tenantId: z.string(),
+        token: z.string().optional(),
       })
     )
-    .query(({ input }) => getApplications(input.tenantId)),
+    .query(({ input }) => {
+      if (!input.token) {
+        return;
+      }
+      return getApplications(input.tenantId, input.token);
+    }),
 
   getApplication: procedure
     .input(
