@@ -1,9 +1,8 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Button, Flex, Spacer } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Application } from '@/lib/api';
-import useAuthToken from '@/hooks/useToken';
 
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
@@ -25,12 +24,14 @@ const COLUMNS = [
 
 export default function Applications() {
   const router = useRouter();
-  const { token } = useAuthToken();
   const { tenantId } = router.query;
+
+  function handleCreate() {
+    router.push(`/tenants/${tenantId}/applications/create`);
+  }
 
   const applications = trpc.listApplications.useQuery({
     tenantId: getFirstQueryStringValue(tenantId) || '',
-    token: token || '',
   });
 
   if (!applications.data) {
@@ -39,7 +40,13 @@ export default function Applications() {
 
   return (
     <Layout>
-      <Box>Applications</Box>
+      <Flex minWidth='max-content' alignItems='center' gap='2'>
+        <Box>Applications</Box>
+        <Spacer />
+        <Button colorScheme='blue' onClick={handleCreate}>
+          Create
+        </Button>
+      </Flex>
       <MyTable<Application>
         columns={COLUMNS}
         data={applications.data as Application[]}

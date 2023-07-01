@@ -27,6 +27,25 @@ export interface Application {
   name: string;
 }
 
+export async function createTenant(name: string): Promise<Application> {
+  const response = await fetch(`${API_URL}/tenants`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      audience: 'http://sesamy.com',
+      issuer: 'http://auth2.sesamy.dev',
+      senderEmail: 'auth@sesamy.dev',
+      senderName: 'Sesamy Auth',
+    }),
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
 export async function getTenants(): Promise<Tenant[]> {
   const response = await fetch(`${API_URL}/tenants`);
   const data = await response.json();
@@ -48,6 +67,29 @@ export async function getApplications(
   const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
     headers: {
       authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function createApplication(
+  tenantId: string,
+  name: string
+): Promise<Application> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      tenantId,
+      allowedWebOrigins: '',
+      allowedCallbackUrls: '',
+      allowedLogoutUrls: '',
+      clientSecret: '',
+    }),
+    headers: {
+      'content-type': 'application/json',
     },
   });
   const data = await response.json();

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 import {
+  createApplication,
+  createTenant,
   getApplication,
   getApplications,
   getTenants,
@@ -12,18 +14,31 @@ import { procedure, router } from '../trpc';
 export const appRouter = router({
   listTenants: procedure.query(() => getTenants()),
 
+  createApplication: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(({ input }) => createApplication(input.tenantId, input.name)),
+
+  createTenant: procedure
+    .input(
+      z.object({
+        name: z.string(),
+      })
+    )
+    .mutation(({ input }) => createTenant(input.name)),
+
   listApplications: procedure
     .input(
       z.object({
         tenantId: z.string(),
-        token: z.string().optional(),
       })
     )
-    .query(({ input }) => {
-      if (!input.token) {
-        return;
-      }
-      return getApplications(input.tenantId, input.token);
+    .query(({ input, ctx }) => {
+      return getApplications(input.tenantId, ctx.accessToken);
     }),
 
   getApplication: procedure

@@ -1,4 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import {
   Avatar,
   Box,
@@ -8,29 +8,25 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+
+function handleLogout() {
+  window.location.href = '/api/auth/logout';
+}
 
 export default function User() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const { user, error, isLoading } = useUser();
 
-  const [name, setName] = useState('');
-  const [picture, setPicture] = useState('');
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setName(user?.name || '');
-      setPicture(user?.picture || '');
-    }
-  }, [isAuthenticated, isLoading, user]);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
 
   return (
     <Box>
       <Menu>
         <MenuButton as={Button} rounded='full' variant='link' cursor='pointer'>
-          <Avatar name={name} src={picture} size='sm' />
+          <Avatar name={user?.name || ''} src={user?.picture || ''} size='sm' />
         </MenuButton>
         <MenuList>
-          <MenuItem onClick={() => logout()}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}> Logout</MenuItem>
         </MenuList>
       </Menu>
     </Box>

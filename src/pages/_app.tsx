@@ -1,12 +1,10 @@
-import { Auth0Provider } from '@auth0/auth0-react';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 
 import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
-
-import ForceLogin from '@/components/auth/Index';
 
 import { trpc } from '../utils/trpc';
 
@@ -17,19 +15,11 @@ import { trpc } from '../utils/trpc';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Auth0Provider
-      domain='auth2.sesamy.dev'
-      clientId='VQy2yYCA9rIBJerZrUN0T'
-      authorizationParams={{
-        redirect_uri:
-          typeof window !== 'undefined' ? window.location.origin : '',
-      }}
-    >
-      <ForceLogin />
+    <UserProvider>
       <ChakraProvider>
         <Component {...pageProps} />
       </ChakraProvider>
-    </Auth0Provider>
+    </UserProvider>
   );
 }
 

@@ -7,11 +7,11 @@ export default function Navbar() {
   return (
     <Flex height='50px' alignItems='center' gap='3' ml={5} mr={5} mt={2} mb={2}>
       <Box>
-        <Text>Authoria</Text>
+        <Text>Auth2</Text>
       </Box>
       <Divider orientation='vertical' />
       <Box>
-        <TenantSelector tenants={[]} />
+        <TenantSelector />
       </Box>
       <Spacer />
       <Box>
