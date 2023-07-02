@@ -1,24 +1,35 @@
 import { Box, Button, Flex, Spacer } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { CellProps } from 'react-table';
 
 import { Application } from '@/lib/api';
 
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
-import MyTable from '@/components/table/Table';
+import MyTable, { DataType } from '@/components/table/Table';
 
 import getFirstQueryStringValue from '@/utils/querystring';
 import { trpc } from '@/utils/trpc';
 
 const COLUMNS = [
   {
-    Header: 'ID',
-    accessor: 'id' as const,
-  },
-  {
     Header: 'Name',
     accessor: 'name' as const,
+  },
+  {
+    Header: 'Link',
+    accessor: (data: DataType) =>
+      `https://auth2.sesamy.dev/authorize?client_id=${data.id}&redirect_uri=https://auth2.sesamy.dev/profile&state=state&response_type=code`,
+    Cell: ({ value }: CellProps<DataType, string>) => (
+      <a href={value} target='_blank' rel='noopener noreferrer'>
+        Open Link
+      </a>
+    ),
+  },
+  {
+    Header: 'ID',
+    accessor: 'id' as const,
   },
 ];
 

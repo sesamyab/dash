@@ -7,6 +7,14 @@ interface TableProps<T extends Record<string, unknown>> {
   data: T[];
 }
 
+export type DataType = {
+  application: {
+    id: string;
+    // ... other properties of application
+  };
+  // ... other properties of the data
+};
+
 function MyTable<T extends Record<string, unknown>>({
   columns,
   data,

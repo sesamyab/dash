@@ -108,3 +108,28 @@ export async function getApplication(
 
   return data;
 }
+
+export interface PatchApplicationData {
+  name?: string;
+  clientSecret?: string;
+}
+
+export async function patchApplication(
+  tenantId: string,
+  applicationId: string,
+  data: PatchApplicationData
+): Promise<Application> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/applications/${applicationId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+      },
+    }
+  );
+  const responseData = await response.json();
+
+  return responseData;
+}

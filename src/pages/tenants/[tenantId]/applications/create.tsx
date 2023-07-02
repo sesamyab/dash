@@ -14,9 +14,7 @@ import Layout from '@/components/layout/Layout';
 
 import { trpc } from '@/utils/trpc';
 
-type FormValues = {
-  name: string;
-};
+import { FormValues } from '@/types/form-values';
 
 export default function CreateApplication() {
   const router = useRouter();
@@ -33,7 +31,7 @@ export default function CreateApplication() {
   }
 
   async function handleSubmit(name: string) {
-    await createApplication.mutate({
+    return createApplication.mutateAsync({
       tenantId: tenantId as string,
       name,
     });
@@ -48,6 +46,7 @@ export default function CreateApplication() {
           await handleSubmit(values.name);
 
           actions.setSubmitting(false);
+          router.push(`/tenants/${tenantId}/applications`);
         }}
       >
         {(props) => (

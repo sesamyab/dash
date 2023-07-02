@@ -7,6 +7,7 @@ import {
   getApplications,
   getTenants,
   getUsers,
+  patchApplication,
 } from '@/lib/api';
 
 import { procedure, router } from '../trpc';
@@ -49,6 +50,22 @@ export const appRouter = router({
       })
     )
     .query(({ input }) => getApplication(input.tenantId, input.applicationId)),
+
+  updateApplication: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        applicationId: z.string(),
+        name: z.string().optional(),
+        clientSecret: z.string().optional(),
+      })
+    )
+    .mutation(({ input }) =>
+      patchApplication(input.tenantId, input.applicationId, {
+        name: input.name,
+        clientSecret: input.clientSecret,
+      })
+    ),
 
   users: procedure
     .input(
