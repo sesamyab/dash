@@ -28,7 +28,10 @@ export interface Application {
   clientSecret: string;
 }
 
-export async function createTenant(name: string): Promise<Application> {
+export async function createTenant(
+  name: string,
+  token: string
+): Promise<Application> {
   const response = await fetch(`${API_URL}/tenants`, {
     method: 'POST',
     body: JSON.stringify({
@@ -40,6 +43,7 @@ export async function createTenant(name: string): Promise<Application> {
     }),
     headers: {
       'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
     },
   });
   const data = await response.json();
@@ -47,15 +51,26 @@ export async function createTenant(name: string): Promise<Application> {
   return data;
 }
 
-export async function getTenants(): Promise<Tenant[]> {
-  const response = await fetch(`${API_URL}/tenants`);
+export async function getTenants(token: string): Promise<Tenant[]> {
+  const response = await fetch(`${API_URL}/tenants`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
 
   return data;
 }
 
-export async function getUsers(tenantId: string): Promise<User[]> {
-  const response = await fetch(`${API_URL}/tenants/${tenantId}/users`);
+export async function getUsers(
+  tenantId: string,
+  token: string
+): Promise<User[]> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/users`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
 
   return data;
@@ -77,7 +92,8 @@ export async function getApplications(
 
 export async function createApplication(
   tenantId: string,
-  name: string
+  name: string,
+  token: string
 ): Promise<Application> {
   const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
     method: 'POST',
@@ -91,6 +107,7 @@ export async function createApplication(
     }),
     headers: {
       'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
     },
   });
   const data = await response.json();
@@ -100,10 +117,16 @@ export async function createApplication(
 
 export async function getApplication(
   tenantId: string,
-  applicationId: string
+  applicationId: string,
+  token: string
 ): Promise<Application> {
   const response = await fetch(
-    `${API_URL}/tenants/${tenantId}/applications/${applicationId}`
+    `${API_URL}/tenants/${tenantId}/applications/${applicationId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
   );
   const data = await response.json();
 
@@ -118,7 +141,8 @@ export interface PatchApplicationData {
 export async function patchApplication(
   tenantId: string,
   applicationId: string,
-  data: PatchApplicationData
+  data: PatchApplicationData,
+  token: string
 ): Promise<Application> {
   const response = await fetch(
     `${API_URL}/tenants/${tenantId}/applications/${applicationId}`,
@@ -127,6 +151,7 @@ export async function patchApplication(
       body: JSON.stringify(data),
       headers: {
         'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
       },
     }
   );

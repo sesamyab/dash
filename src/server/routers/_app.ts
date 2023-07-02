@@ -13,7 +13,7 @@ import {
 import { procedure, router } from '../trpc';
 
 export const appRouter = router({
-  listTenants: procedure.query(() => getTenants()),
+  listTenants: procedure.query(({ ctx }) => getTenants(ctx.accessToken)),
 
   createApplication: procedure
     .input(
@@ -22,7 +22,9 @@ export const appRouter = router({
         name: z.string(),
       })
     )
-    .mutation(({ input }) => createApplication(input.tenantId, input.name)),
+    .mutation(({ input, ctx }) =>
+      createApplication(input.tenantId, input.name, ctx.accessToken)
+    ),
 
   createTenant: procedure
     .input(
@@ -30,7 +32,7 @@ export const appRouter = router({
         name: z.string(),
       })
     )
-    .mutation(({ input }) => createTenant(input.name)),
+    .mutation(({ input, ctx }) => createTenant(input.name, ctx.accessToken)),
 
   listApplications: procedure
     .input(
@@ -49,7 +51,9 @@ export const appRouter = router({
         applicationId: z.string(),
       })
     )
-    .query(({ input }) => getApplication(input.tenantId, input.applicationId)),
+    .query(({ input, ctx }) =>
+      getApplication(input.tenantId, input.applicationId, ctx.accessToken)
+    ),
 
   updateApplication: procedure
     .input(
@@ -60,11 +64,16 @@ export const appRouter = router({
         clientSecret: z.string().optional(),
       })
     )
-    .mutation(({ input }) =>
-      patchApplication(input.tenantId, input.applicationId, {
-        name: input.name,
-        clientSecret: input.clientSecret,
-      })
+    .mutation(({ input, ctx }) =>
+      patchApplication(
+        input.tenantId,
+        input.applicationId,
+        {
+          name: input.name,
+          clientSecret: input.clientSecret,
+        },
+        ctx.accessToken
+      )
     ),
 
   users: procedure
@@ -73,7 +82,7 @@ export const appRouter = router({
         tenantId: z.string(),
       })
     )
-    .query(({ input }) => getUsers(input.tenantId)),
+    .query(({ input, ctx }) => getUsers(input.tenantId, ctx.accessToken)),
 });
 
 // export type definition of API
