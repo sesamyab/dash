@@ -25,6 +25,7 @@ export interface Application {
   [key: string]: number | string;
   id: string;
   name: string;
+  clientSecret: string;
 }
 
 export async function createTenant(name: string): Promise<Application> {
