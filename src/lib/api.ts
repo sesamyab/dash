@@ -28,6 +28,12 @@ export interface Application {
   clientSecret: string;
 }
 
+export interface Connection {
+  [key: string]: number | string;
+  id: string;
+  name: string;
+}
+
 export async function createTenant(
   name: string,
   token: string
@@ -76,20 +82,6 @@ export async function getUsers(
   return data;
 }
 
-export async function getApplications(
-  tenantId: string,
-  token: string
-): Promise<Application[]> {
-  const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-
-  return data;
-}
-
 export async function createApplication(
   tenantId: string,
   name: string,
@@ -115,6 +107,30 @@ export async function createApplication(
   return data;
 }
 
+export async function createConnection(
+  tenantId: string,
+  name: string,
+  token: string
+): Promise<Application> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/connections`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      tenantId,
+      clientId: '',
+      clientSecret: '',
+      authorizationEndpoint: '',
+    }),
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
 export async function getApplication(
   tenantId: string,
   applicationId: string,
@@ -128,6 +144,34 @@ export async function getApplication(
       },
     }
   );
+  const data = await response.json();
+
+  return data;
+}
+
+export async function listApplications(
+  tenantId: string,
+  token: string
+): Promise<Application[]> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/applications`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function listConnections(
+  tenantId: string,
+  token: string
+): Promise<Connection[]> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/connections`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
 
   return data;

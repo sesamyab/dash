@@ -18,7 +18,11 @@ export default function Application() {
   });
 
   if (applicationResult.isLoading) {
-    return <PageLoader />;
+    return (
+      <Layout>
+        <PageLoader />
+      </Layout>
+    );
   }
 
   const application = applicationResult.data;

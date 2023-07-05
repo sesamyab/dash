@@ -2,11 +2,13 @@ import { z } from 'zod';
 
 import {
   createApplication,
+  createConnection,
   createTenant,
   getApplication,
-  getApplications,
   getTenants,
   getUsers,
+  listApplications,
+  listConnections,
   patchApplication,
 } from '@/lib/api';
 
@@ -26,6 +28,17 @@ export const appRouter = router({
       createApplication(input.tenantId, input.name, ctx.accessToken)
     ),
 
+  createConnection: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) =>
+      createConnection(input.tenantId, input.name, ctx.accessToken)
+    ),
+
   createTenant: procedure
     .input(
       z.object({
@@ -41,7 +54,17 @@ export const appRouter = router({
       })
     )
     .query(({ input, ctx }) => {
-      return getApplications(input.tenantId, ctx.accessToken);
+      return listApplications(input.tenantId, ctx.accessToken);
+    }),
+
+  listConnections: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      return listConnections(input.tenantId, ctx.accessToken);
     }),
 
   getApplication: procedure

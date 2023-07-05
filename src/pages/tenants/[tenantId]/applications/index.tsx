@@ -46,7 +46,11 @@ export default function Applications() {
   });
 
   if (!applications.data) {
-    return PageLoader();
+    return (
+      <Layout>
+        <PageLoader />
+      </Layout>
+    );
   }
 
   return (

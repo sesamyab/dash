@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Spacer } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { CellProps, Column } from 'react-table';
+import { Column } from 'react-table';
 
-import { Application } from '@/lib/api';
+import { Connection } from '@/lib/api';
 
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
@@ -12,20 +12,10 @@ import MyTable from '@/components/table/Table';
 import getFirstQueryStringValue from '@/utils/querystring';
 import { trpc } from '@/utils/trpc';
 
-const COLUMNS: Column<Application>[] = [
+const COLUMNS: Column<Connection>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-  },
-  {
-    Header: 'Link',
-    accessor: (data: Application) =>
-      `https://auth2.sesamy.dev/authorize?client_id=${data.id}&redirect_uri=https://auth2.sesamy.dev/profile&state=state&response_type=code`,
-    Cell: ({ value }: CellProps<Application, string>) => (
-      <a href={value} target='_blank' rel='noopener noreferrer'>
-        Open Link
-      </a>
-    ),
   },
   {
     Header: 'ID',
@@ -33,20 +23,24 @@ const COLUMNS: Column<Application>[] = [
   },
 ];
 
-export default function Applications() {
+export default function Connections() {
   const router = useRouter();
   const { tenantId } = router.query;
 
   function handleCreate() {
-    router.push(`/tenants/${tenantId}/applications/create`);
+    router.push(`/tenants/${tenantId}/connections/create`);
   }
 
-  const applications = trpc.listApplications.useQuery({
+  const connections = trpc.listConnections.useQuery({
     tenantId: getFirstQueryStringValue(tenantId) || '',
   });
 
-  if (!applications.data) {
-    return PageLoader();
+  if (!connections.data) {
+    return (
+      <Layout>
+        <PageLoader />
+      </Layout>
+    );
   }
 
   return (
@@ -58,9 +52,9 @@ export default function Applications() {
           Create
         </Button>
       </Flex>
-      <MyTable<Application>
+      <MyTable<Connection>
         columns={COLUMNS}
-        data={applications.data as Application[]}
+        data={connections.data as Connection[]}
       />
     </Layout>
   );

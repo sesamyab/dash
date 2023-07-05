@@ -30,17 +30,25 @@ export default function Users() {
   const { tenantId } = router.query;
 
   if (typeof tenantId !== 'string') {
-    return PageLoader();
+    return (
+      <Layout>
+        <PageLoader />
+      </Layout>
+    );
   }
   const users = trpc.users.useQuery({ tenantId });
 
   if (!users.data) {
-    return PageLoader();
+    return (
+      <Layout>
+        <PageLoader />
+      </Layout>
+    );
   }
 
   return (
     <Layout>
-      <Box>Applications</Box>
+      <Box>Users</Box>
       <MyTable<User> columns={COLUMNS} data={users.data as User[]} />
     </Layout>
   );

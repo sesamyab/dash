@@ -20,7 +20,7 @@ export default function CreateApplication() {
   const router = useRouter();
   const { tenantId } = router.query;
 
-  const createApplication = trpc.createApplication.useMutation();
+  const createConnection = trpc.createConnection.useMutation();
 
   function validateName(value: string) {
     let error;
@@ -31,7 +31,7 @@ export default function CreateApplication() {
   }
 
   async function handleSubmit(name: string) {
-    return createApplication.mutateAsync({
+    return createConnection.mutateAsync({
       tenantId: tenantId as string,
       name,
     });
@@ -39,14 +39,14 @@ export default function CreateApplication() {
 
   return (
     <Layout>
-      <Box margin={3}>Create Application</Box>
+      <Box margin={3}>Create Connection</Box>
       <Formik
         initialValues={{ name: '' }}
         onSubmit={async (values, actions) => {
           await handleSubmit(values.name);
 
           actions.setSubmitting(false);
-          router.push(`/tenants/${tenantId}/applications`);
+          router.push(`/tenants/${tenantId}/connections`);
         }}
       >
         {(props) => (
