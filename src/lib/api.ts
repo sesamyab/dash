@@ -32,6 +32,7 @@ export interface Connection {
   [key: string]: number | string;
   id: string;
   name: string;
+  authorizationEndpoint: string;
 }
 
 export async function createTenant(
@@ -149,6 +150,24 @@ export async function getApplication(
   return data;
 }
 
+export async function getConnection(
+  tenantId: string,
+  connectionId: string,
+  token: string
+): Promise<Application> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
 export async function listApplications(
   tenantId: string,
   token: string
@@ -161,6 +180,24 @@ export async function listApplications(
   const data = await response.json();
 
   return data;
+}
+
+export async function deleteConnection(
+  tenantId: string,
+  connectionId: string,
+  token: string
+): Promise<boolean> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      method: 'DELETE',
+    }
+  );
+
+  return response.ok;
 }
 
 export async function listConnections(
@@ -190,6 +227,35 @@ export async function patchApplication(
 ): Promise<Application> {
   const response = await fetch(
     `${API_URL}/tenants/${tenantId}/applications/${applicationId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const responseData = await response.json();
+
+  return responseData;
+}
+
+export interface PatchConnectionData {
+  name?: string;
+  clientId?: string;
+  clientSecret?: string;
+  authorizationEndpoint?: string;
+}
+
+export async function patchConnection(
+  tenantId: string,
+  connectionId: string,
+  data: PatchConnectionData,
+  token: string
+): Promise<Application> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
     {
       method: 'PATCH',
       body: JSON.stringify(data),

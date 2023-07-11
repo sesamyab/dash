@@ -5,10 +5,13 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Stack,
 } from '@chakra-ui/react';
 import { Field, FieldInputProps, Form, Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/router';
 import React from 'react';
+
+import { Connection } from '@/lib/api';
 
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
@@ -16,14 +19,8 @@ import PageLoader from '@/components/PageLoader';
 import getFirstQueryStringValue from '@/utils/querystring';
 import { trpc } from '@/utils/trpc';
 
-type FormValues = {
-  name: string;
-  clientSecret: string;
-  clientId: string;
-};
-
 interface InputFieldProps {
-  name: keyof FormValues;
+  name: keyof Connection;
   validate?: (value: string) => string | undefined;
   placeholder: string;
   isReadOnly?: boolean;
@@ -42,7 +39,7 @@ function InputField({
         form,
       }: {
         field: FieldInputProps<string>;
-        form: FormikProps<FormValues>;
+        form: FormikProps<Connection>;
       }) => (
         <FormControl
           isInvalid={Boolean(form.errors[name] && form.touched[name])}
@@ -56,23 +53,33 @@ function InputField({
   );
 }
 
-export default function Application() {
+export default function Connection() {
   const router = useRouter();
-  const { tenantId, applicationId } = router.query;
+  const { tenantId, connectionId } = router.query;
 
-  const applicationResult = trpc.getApplication.useQuery({
+  const applicationResult = trpc.getConnection.useQuery({
     tenantId: getFirstQueryStringValue(tenantId) || '',
-    applicationId: getFirstQueryStringValue(applicationId) || '',
+    connectionId: getFirstQueryStringValue(connectionId) || '',
   });
-  const updateApplication = trpc.updateApplication.useMutation();
+  const updateConnection = trpc.updateConnection.useMutation();
+  const deleteConnection = trpc.deleteConnection.useMutation();
 
   if (applicationResult.isLoading) {
     return <PageLoader />;
   }
 
-  const application = applicationResult.data;
-  if (!application) {
+  const connection = applicationResult.data;
+  if (!connection) {
     return 'Not found';
+  }
+
+  async function handleDelete() {
+    await deleteConnection.mutateAsync({
+      tenantId: getFirstQueryStringValue(tenantId) || '',
+      connectionId: getFirstQueryStringValue(connectionId) || '',
+    });
+
+    router.push(`/tenants/${tenantId}/connections`);
   }
 
   function validateName(value: string) {
@@ -90,22 +97,25 @@ export default function Application() {
   return (
     <Layout>
       <main>
-        <Box>Application: {application.name}</Box>
+        <Box>Connection: {connection.name}</Box>
         <Formik
           initialValues={{
-            name: application.name as string,
-            clientSecret: application.clientSecret as string,
-            clientId: application.id as string,
+            name: connection.name as string,
+            clientSecret: connection.clientSecret as string,
+            clientId: connection.clientId as string,
+            authorizationEndpoint: connection.authorizationEndpoint as string,
           }}
           onSubmit={async (values, actions) => {
-            await updateApplication.mutate({
+            await updateConnection.mutate({
               tenantId: tenantId as string,
-              applicationId: applicationId as string,
+              connectionId: connectionId as string,
               name: values.name,
               clientSecret: values.clientSecret,
+              clientId: values.clientId,
+              authorizationEndpoint: values.authorizationEndpoint,
             });
 
-            router.push(`/tenants/${tenantId}/applications`);
+            router.push(`/tenants/${tenantId}/connections`);
 
             actions.setSubmitting(false);
           }}
@@ -117,20 +127,33 @@ export default function Application() {
                 validate={validateName}
                 placeholder='name'
               />
-              <InputField name='clientId' placeholder='clientId' isReadOnly />
+              <InputField
+                name='clientId'
+                validate={validateSecret}
+                placeholder='client id'
+              />
               <InputField
                 name='clientSecret'
                 validate={validateSecret}
                 placeholder='client secret'
               />
-              <Button
-                mt={4}
-                colorScheme='teal'
-                isLoading={props.isSubmitting}
-                type='submit'
-              >
-                Save
-              </Button>
+              <InputField
+                name='authorizationEndpoint'
+                placeholder='authorization endpoint'
+              />
+              <Stack direction='row' align='center' margin={4}>
+                <Button mt={4} colorScheme='red' onClick={handleDelete}>
+                  Delete
+                </Button>
+                <Button
+                  mt={4}
+                  colorScheme='teal'
+                  isLoading={props.isSubmitting}
+                  type='submit'
+                >
+                  Save
+                </Button>
+              </Stack>
             </Form>
           )}
         </Formik>

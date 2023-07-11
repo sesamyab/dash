@@ -10,20 +10,16 @@ import { Field, FieldInputProps, Form, Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { Application } from '@/lib/api';
+
 import Layout from '@/components/layout/Layout';
 import PageLoader from '@/components/PageLoader';
 
 import getFirstQueryStringValue from '@/utils/querystring';
 import { trpc } from '@/utils/trpc';
 
-type FormValues = {
-  name: string;
-  clientSecret: string;
-  clientId: string;
-};
-
 interface InputFieldProps {
-  name: keyof FormValues;
+  name: keyof Application;
   validate?: (value: string) => string | undefined;
   placeholder: string;
   isReadOnly?: boolean;
@@ -42,7 +38,7 @@ function InputField({
         form,
       }: {
         field: FieldInputProps<string>;
-        form: FormikProps<FormValues>;
+        form: FormikProps<Application>;
       }) => (
         <FormControl
           isInvalid={Boolean(form.errors[name] && form.touched[name])}

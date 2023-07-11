@@ -4,12 +4,15 @@ import {
   createApplication,
   createConnection,
   createTenant,
+  deleteConnection,
   getApplication,
+  getConnection,
   getTenants,
   getUsers,
   listApplications,
   listConnections,
   patchApplication,
+  patchConnection,
 } from '@/lib/api';
 
 import { procedure, router } from '../trpc';
@@ -47,6 +50,39 @@ export const appRouter = router({
     )
     .mutation(({ input, ctx }) => createTenant(input.name, ctx.accessToken)),
 
+  deleteConnection: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        connectionId: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) =>
+      deleteConnection(input.tenantId, input.connectionId, ctx.accessToken)
+    ),
+
+  getApplication: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        applicationId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) =>
+      getApplication(input.tenantId, input.applicationId, ctx.accessToken)
+    ),
+
+  getConnection: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        connectionId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) =>
+      getConnection(input.tenantId, input.connectionId, ctx.accessToken)
+    ),
+
   listApplications: procedure
     .input(
       z.object({
@@ -67,16 +103,13 @@ export const appRouter = router({
       return listConnections(input.tenantId, ctx.accessToken);
     }),
 
-  getApplication: procedure
+  listUsers: procedure
     .input(
       z.object({
         tenantId: z.string(),
-        applicationId: z.string(),
       })
     )
-    .query(({ input, ctx }) =>
-      getApplication(input.tenantId, input.applicationId, ctx.accessToken)
-    ),
+    .query(({ input, ctx }) => getUsers(input.tenantId, ctx.accessToken)),
 
   updateApplication: procedure
     .input(
@@ -99,13 +132,30 @@ export const appRouter = router({
       )
     ),
 
-  users: procedure
+  updateConnection: procedure
     .input(
       z.object({
         tenantId: z.string(),
+        connectionId: z.string(),
+        name: z.string().optional(),
+        clientId: z.string().optional(),
+        clientSecret: z.string().optional(),
+        authorizationEndpoint: z.string().optional(),
       })
     )
-    .query(({ input, ctx }) => getUsers(input.tenantId, ctx.accessToken)),
+    .mutation(({ input, ctx }) =>
+      patchConnection(
+        input.tenantId,
+        input.connectionId,
+        {
+          name: input.name,
+          clientId: input.clientId,
+          clientSecret: input.clientSecret,
+          authorizationEndpoint: input.authorizationEndpoint,
+        },
+        ctx.accessToken
+      )
+    ),
 });
 
 // export type definition of API

@@ -36,7 +36,7 @@ export default function Users() {
       </Layout>
     );
   }
-  const users = trpc.users.useQuery({ tenantId });
+  const users = trpc.listUsers.useQuery({ tenantId });
 
   if (!users.data) {
     return (
