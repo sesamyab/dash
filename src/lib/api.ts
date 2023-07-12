@@ -14,6 +14,7 @@ export interface Tenant {
 export interface User {
   [key: string]: number | string;
   id: string;
+  name: string;
   email: string;
   // given_name?: string;
   // family_name?: string;
@@ -33,6 +34,7 @@ export interface Connection {
   id: string;
   name: string;
   authorizationEndpoint: string;
+  tokenEndpoint: string;
 }
 
 export async function createTenant(
@@ -121,6 +123,7 @@ export async function createConnection(
       clientId: '',
       clientSecret: '',
       authorizationEndpoint: '',
+      tokenEndpoint: '',
     }),
     headers: {
       'content-type': 'application/json',
@@ -157,6 +160,24 @@ export async function getConnection(
 ): Promise<Application> {
   const response = await fetch(
     `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export async function getUser(
+  tenantId: string,
+  userId: string,
+  token: string
+): Promise<Application> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/users/${userId}`,
     {
       headers: {
         authorization: `Bearer ${token}`,
@@ -246,6 +267,7 @@ export interface PatchConnectionData {
   clientId?: string;
   clientSecret?: string;
   authorizationEndpoint?: string;
+  tokenEndpoint?: string;
 }
 
 export async function patchConnection(

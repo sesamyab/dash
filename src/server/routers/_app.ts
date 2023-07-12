@@ -8,6 +8,7 @@ import {
   getApplication,
   getConnection,
   getTenants,
+  getUser,
   getUsers,
   listApplications,
   listConnections,
@@ -83,6 +84,17 @@ export const appRouter = router({
       getConnection(input.tenantId, input.connectionId, ctx.accessToken)
     ),
 
+  getUser: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) =>
+      getUser(input.tenantId, input.userId, ctx.accessToken)
+    ),
+
   listApplications: procedure
     .input(
       z.object({
@@ -141,6 +153,7 @@ export const appRouter = router({
         clientId: z.string().optional(),
         clientSecret: z.string().optional(),
         authorizationEndpoint: z.string().optional(),
+        tokenEndpoint: z.string().optional(),
       })
     )
     .mutation(({ input, ctx }) =>
@@ -152,6 +165,7 @@ export const appRouter = router({
           clientId: input.clientId,
           clientSecret: input.clientSecret,
           authorizationEndpoint: input.authorizationEndpoint,
+          tokenEndpoint: input.tokenEndpoint,
         },
         ctx.accessToken
       )

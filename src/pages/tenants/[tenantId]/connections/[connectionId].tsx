@@ -104,6 +104,7 @@ export default function Connection() {
             clientSecret: connection.clientSecret as string,
             clientId: connection.clientId as string,
             authorizationEndpoint: connection.authorizationEndpoint as string,
+            tokenEndpoint: connection.tokenEndpoint as string,
           }}
           onSubmit={async (values, actions) => {
             await updateConnection.mutate({
@@ -113,6 +114,7 @@ export default function Connection() {
               clientSecret: values.clientSecret,
               clientId: values.clientId,
               authorizationEndpoint: values.authorizationEndpoint,
+              tokenEndpoint: values.tokenEndpoint,
             });
 
             router.push(`/tenants/${tenantId}/connections`);
@@ -141,6 +143,7 @@ export default function Connection() {
                 name='authorizationEndpoint'
                 placeholder='authorization endpoint'
               />
+              <InputField name='tokenEndpoint' placeholder='token endpoint' />
               <Stack direction='row' align='center' margin={4}>
                 <Button mt={4} colorScheme='red' onClick={handleDelete}>
                   Delete

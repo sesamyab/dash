@@ -20,7 +20,7 @@ const COLUMNS: Column<Application>[] = [
   {
     Header: 'Link',
     accessor: (data: Application) =>
-      `https://auth2.sesamy.dev/authorize?client_id=${data.id}&redirect_uri=https://auth2.sesamy.dev/profile&state=state&response_type=code`,
+      `https://auth2.sesamy.dev/authorize?client_id=${data.id}&redirect_uri=https://auth2.sesamy.dev/u/info&state=state&response_type=code`,
     Cell: ({ value }: CellProps<Application, string>) => (
       <a href={value} target='_blank' rel='noopener noreferrer'>
         Open Link
