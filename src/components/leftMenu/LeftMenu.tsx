@@ -5,6 +5,10 @@ export default function LeftMenu() {
   const router = useRouter();
   const { tenantId } = router.query;
 
+  if (!tenantId) {
+    return <></>;
+  }
+
   return (
     <Box
       as='nav'

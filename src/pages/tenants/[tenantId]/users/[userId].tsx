@@ -91,6 +91,8 @@ export default function User() {
           initialValues={{
             name: user.name as string,
             email: user.email as string,
+            given_name: user.given_name as string,
+            family_name: user.family_name as string,
           }}
           onSubmit={async (values, actions) => {
             // TODO: add update
@@ -108,6 +110,8 @@ export default function User() {
                 placeholder='name'
               />
               <InputField name='email' placeholder='email' />
+              <InputField name='given_name' placeholder='given name' />
+              <InputField name='family_name' placeholder='family name' />
               <Stack direction='row' align='center' margin={4}>
                 <Button mt={4} colorScheme='red' onClick={handleDelete}>
                   Delete
