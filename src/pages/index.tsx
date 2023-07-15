@@ -17,5 +17,11 @@ export default function HomePage() {
     return NotFound();
   }
 
-  router.push(`/tenants/${tenantResults.data[0].id}`);
+  const firstTenant = tenantResults.data[0];
+
+  if (!firstTenant) {
+    router.push(`/tenants/create`);
+  } else {
+    router.push(`/tenants/${firstTenant.id}`);
+  }
 }
