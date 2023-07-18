@@ -77,9 +77,9 @@ export default function Application() {
     }
   }
 
-  function validateSecret(value: string) {
+  function validateString(value: string) {
     if (!value) {
-      return 'Secret is required';
+      return 'Filed is required';
     }
   }
 
@@ -92,6 +92,7 @@ export default function Application() {
             name: application.name as string,
             clientSecret: application.clientSecret as string,
             clientId: application.id as string,
+            allowedCallbackUrls: application.allowedCallbackUrls as string,
           }}
           onSubmit={async (values, actions) => {
             await updateApplication.mutate({
@@ -99,6 +100,7 @@ export default function Application() {
               applicationId: applicationId as string,
               name: values.name,
               clientSecret: values.clientSecret,
+              allowedCallbackUrls: values.allowedCallbackUrls,
             });
 
             router.push(`/tenants/${tenantId}/applications`);
@@ -116,8 +118,13 @@ export default function Application() {
               <InputField name='clientId' placeholder='clientId' isReadOnly />
               <InputField
                 name='clientSecret'
-                validate={validateSecret}
+                validate={validateString}
                 placeholder='client secret'
+              />
+              <InputField
+                name='allowedCallbackUrls'
+                validate={validateString}
+                placeholder='allowed callback urls'
               />
               <Button
                 mt={4}

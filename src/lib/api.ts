@@ -238,6 +238,7 @@ export async function listConnections(
 export interface PatchApplicationData {
   name?: string;
   clientSecret?: string;
+  allowedCallbackUrls?: string;
 }
 
 export async function patchApplication(

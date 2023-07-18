@@ -130,6 +130,7 @@ export const appRouter = router({
         applicationId: z.string(),
         name: z.string().optional(),
         clientSecret: z.string().optional(),
+        allowedCallbackUrls: z.string().optional(),
       })
     )
     .mutation(({ input, ctx }) =>
@@ -139,6 +140,7 @@ export const appRouter = router({
         {
           name: input.name,
           clientSecret: input.clientSecret,
+          allowedCallbackUrls: input.allowedCallbackUrls,
         },
         ctx.accessToken
       )
