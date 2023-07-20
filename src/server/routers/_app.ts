@@ -3,23 +3,27 @@ import { z } from 'zod';
 import {
   createApplication,
   createConnection,
+  createMigration,
   createTenant,
   deleteConnection,
   getApplication,
   getConnection,
-  getTenants,
+  getMigration,
   getUser,
-  getUsers,
   listApplications,
   listConnections,
+  listMigrations,
+  listTenants,
+  listUsers,
   patchApplication,
   patchConnection,
+  patchMigration,
 } from '@/lib/api';
 
 import { procedure, router } from '../trpc';
 
 export const appRouter = router({
-  listTenants: procedure.query(({ ctx }) => getTenants(ctx.accessToken)),
+  listTenants: procedure.query(({ ctx }) => listTenants(ctx.accessToken)),
 
   createApplication: procedure
     .input(
@@ -43,6 +47,17 @@ export const appRouter = router({
       createConnection(input.tenantId, input.name, ctx.accessToken)
     ),
 
+  createMigration: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        provider: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) =>
+      createMigration(input.tenantId, input.provider, ctx.accessToken)
+    ),
+
   createTenant: procedure
     .input(
       z.object({
@@ -60,6 +75,17 @@ export const appRouter = router({
     )
     .mutation(({ input, ctx }) =>
       deleteConnection(input.tenantId, input.connectionId, ctx.accessToken)
+    ),
+
+  deleteMigration: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        migrationId: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) =>
+      deleteConnection(input.tenantId, input.migrationId, ctx.accessToken)
     ),
 
   getApplication: procedure
@@ -82,6 +108,17 @@ export const appRouter = router({
     )
     .query(({ input, ctx }) =>
       getConnection(input.tenantId, input.connectionId, ctx.accessToken)
+    ),
+
+  getMigration: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        migrationId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) =>
+      getMigration(input.tenantId, input.migrationId, ctx.accessToken)
     ),
 
   getUser: procedure
@@ -115,13 +152,23 @@ export const appRouter = router({
       return listConnections(input.tenantId, ctx.accessToken);
     }),
 
+  listMigrations: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      return listMigrations(input.tenantId, ctx.accessToken);
+    }),
+
   listUsers: procedure
     .input(
       z.object({
         tenantId: z.string(),
       })
     )
-    .query(({ input, ctx }) => getUsers(input.tenantId, ctx.accessToken)),
+    .query(({ input, ctx }) => listUsers(input.tenantId, ctx.accessToken)),
 
   updateApplication: procedure
     .input(
@@ -168,6 +215,31 @@ export const appRouter = router({
           clientSecret: input.clientSecret,
           authorizationEndpoint: input.authorizationEndpoint,
           tokenEndpoint: input.tokenEndpoint,
+        },
+        ctx.accessToken
+      )
+    ),
+
+  updateMigration: procedure
+    .input(
+      z.object({
+        tenantId: z.string(),
+        migrationId: z.string(),
+        provider: z.string(),
+        clientId: z.string().optional(),
+        domain: z.string().optional(),
+        origin: z.string().optional(),
+      })
+    )
+    .mutation(({ input, ctx }) =>
+      patchMigration(
+        input.tenantId,
+        input.migrationId,
+        {
+          provider: input.provider,
+          clientId: input.clientId,
+          domain: input.domain,
+          origin: input.origin,
         },
         ctx.accessToken
       )

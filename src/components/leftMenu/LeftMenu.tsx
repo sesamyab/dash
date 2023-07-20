@@ -23,6 +23,7 @@ export default function LeftMenu() {
         <Link href='/'>Dashboard</Link>
         <Link href={`/tenants/${tenantId}/applications`}>Applications</Link>
         <Link href={`/tenants/${tenantId}/connections`}>Connections</Link>
+        <Link href={`/tenants/${tenantId}/migrations`}>Migrations</Link>
         <Link href={`/tenants/${tenantId}/users`}>Users</Link>
       </Stack>
     </Box>

@@ -37,6 +37,14 @@ export interface Connection {
   tokenEndpoint: string;
 }
 
+export interface Migration {
+  [key: string]: number | string;
+  id: string;
+  provider: string;
+  clientId: string;
+  domain: string;
+}
+
 export async function createTenant(
   name: string,
   token: string
@@ -60,31 +68,6 @@ export async function createTenant(
   return data;
 }
 
-export async function getTenants(token: string): Promise<Tenant[]> {
-  const response = await fetch(`${API_URL}/tenants`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-
-  return data;
-}
-
-export async function getUsers(
-  tenantId: string,
-  token: string
-): Promise<User[]> {
-  const response = await fetch(`${API_URL}/tenants/${tenantId}/users`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-
-  return data;
-}
-
 export async function createApplication(
   tenantId: string,
   name: string,
@@ -94,7 +77,6 @@ export async function createApplication(
     method: 'POST',
     body: JSON.stringify({
       name,
-      tenantId,
       allowedWebOrigins: '',
       allowedCallbackUrls: '',
       allowedLogoutUrls: '',
@@ -119,7 +101,6 @@ export async function createConnection(
     method: 'POST',
     body: JSON.stringify({
       name,
-      tenantId,
       clientId: '',
       clientSecret: '',
       authorizationEndpoint: '',
@@ -133,6 +114,65 @@ export async function createConnection(
   const data = await response.json();
 
   return data;
+}
+
+export async function createMigration(
+  tenantId: string,
+  provider: string,
+  token: string
+): Promise<Migration> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/migrations`, {
+    method: 'POST',
+    body: JSON.stringify({
+      provider,
+      clientId: '',
+      domain: '',
+      origin: '',
+    }),
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function deleteConnection(
+  tenantId: string,
+  connectionId: string,
+  token: string
+): Promise<boolean> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      method: 'DELETE',
+    }
+  );
+
+  return response.ok;
+}
+
+export async function deleteMigration(
+  tenantId: string,
+  migrationId: string,
+  token: string
+): Promise<boolean> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/migrations/${migrationId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      method: 'DELETE',
+    }
+  );
+
+  return response.ok;
 }
 
 export async function getApplication(
@@ -160,6 +200,24 @@ export async function getConnection(
 ): Promise<Application> {
   const response = await fetch(
     `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export async function getMigration(
+  tenantId: string,
+  migtationId: string,
+  token: string
+): Promise<Migration> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/migrations/${migtationId}`,
     {
       headers: {
         authorization: `Bearer ${token}`,
@@ -203,29 +261,50 @@ export async function listApplications(
   return data;
 }
 
-export async function deleteConnection(
-  tenantId: string,
-  connectionId: string,
-  token: string
-): Promise<boolean> {
-  const response = await fetch(
-    `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
-    {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      method: 'DELETE',
-    }
-  );
-
-  return response.ok;
-}
-
 export async function listConnections(
   tenantId: string,
   token: string
 ): Promise<Connection[]> {
   const response = await fetch(`${API_URL}/tenants/${tenantId}/connections`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function listMigrations(
+  tenantId: string,
+  token: string
+): Promise<Migration[]> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/migrations`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function listTenants(token: string): Promise<Tenant[]> {
+  const response = await fetch(`${API_URL}/tenants`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export async function listUsers(
+  tenantId: string,
+  token: string
+): Promise<User[]> {
+  const response = await fetch(`${API_URL}/tenants/${tenantId}/users`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -279,6 +358,35 @@ export async function patchConnection(
 ): Promise<Application> {
   const response = await fetch(
     `${API_URL}/tenants/${tenantId}/connections/${connectionId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const responseData = await response.json();
+
+  return responseData;
+}
+
+export interface PatchMigrationData {
+  provider?: string;
+  clientId?: string;
+  domain?: string;
+  origin?: string;
+}
+
+export async function patchMigration(
+  tenantId: string,
+  migrationId: string,
+  data: PatchMigrationData,
+  token: string
+): Promise<Migration> {
+  const response = await fetch(
+    `${API_URL}/tenants/${tenantId}/migrations/${migrationId}`,
     {
       method: 'PATCH',
       body: JSON.stringify(data),
